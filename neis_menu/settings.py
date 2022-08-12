@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
+import json
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,9 +28,17 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+def get_secret(secret_name):
+    """
+    Get the value of the secret variable with the given name.
+    """
+    with open(BASE_DIR / '.secrets.json') as f:
+        secrets = json.load(f)
+    return secrets[secret_name]
+
+NEIS_API_KEY = get_secret('NEIS_API_KEY')
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
