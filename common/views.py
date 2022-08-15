@@ -21,7 +21,7 @@ class CustomView(APIView):
         try:
             return self.model.objects.get(**kwargs)
         except self.model.DoesNotExist:
-            raise Response(status=status.HTTP_404_NOT_FOUND)
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
     def get_response_data(self, object, many=False):
         '''
