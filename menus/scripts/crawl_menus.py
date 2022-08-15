@@ -115,7 +115,10 @@ def get_menu(school_code, edu_office_code, start_date, end_date):
         f'&SD_SCHUL_CODE={school_code}' \
         f'&MLSV_FROM_YMD={start_date}' \
         f'&MLSV_TO_YMD={end_date}'
-    response = requests.get(url)
+    response = requests.get(
+        url,
+        headers={'Content-Type': 'application/json'}
+    )
     return response.json()
 
 
