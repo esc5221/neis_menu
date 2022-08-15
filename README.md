@@ -1,5 +1,5 @@
 # API Docs
-
+[NEIS Menu API Documentation](https://documenter.getpostman.com/view/17269577/VUjSGPQ1#02e30990-a9c8-46ed-b289-823ac4b4c2de)
 # Install
 ### Default
 ``` shell
@@ -11,9 +11,8 @@ source django_loaddata.sh
 ```
 * `docker-compose up -d` 실행 시, `127.0.0.1:8000`에서 runserver 실행
 * `source django_loaddata.sh` : db에 initial data(_dumped_data)를 load
-### NEIS API key 설정
+### NEIS API key 설정 (.secrets.json)
 ``` json
-# .secrets.json
 {
     "NEIS_API_KEY": "..."
 }
