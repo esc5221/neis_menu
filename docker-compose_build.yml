@@ -1,0 +1,53 @@
+
+version: '3'
+
+volumes:
+  db_volume: {}
+  python_packages: {}
+
+services:
+  db:
+    image: postgres:latest
+    platform: linux/amd64
+    volumes:
+      - db_volume:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=neis_menu
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_INITDB_ARGS=--encoding=UTF-8
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: "pg_isready -h localhost -p 5432 -U postgres"
+      interval: 3s
+      timeout: 1s
+      retries: 10
+
+  django:
+    build:
+      context: .
+      dockerfile: ./compose/django/Dockerfile-dev
+    environment:
+      - DJANGO_DEBUG=True
+      - DJANGO_DB_HOST=db
+      - DJANGO_DB_PORT=5433
+      # - DJANGO_DB_NAME=
+      # - DJANGO_DB_USERNAME=
+      # - DJANGO_DB_PASSWORD=
+      # - DJANGO_SECRET_KEY=
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    links:
+      - db
+    command: /start-dev.sh
+    volumes:
+      - .:/app
+      - python_packages:/usr/local/lib/python3.9/site-packages/
+    tty: true
+
+
+#http://raccoonyy.github.io/docker-usages-for-dev-environment-setup/
