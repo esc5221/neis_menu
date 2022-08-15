@@ -44,9 +44,9 @@ class SchoolListCreateView(CustomView):
                 detail='not found', status_code=status.HTTP_404_NOT_FOUND)
 
         try:
-            School.objects.create(**school_data)
+            school = School.objects.create(**school_data)
         except IntegrityError:
             raise CustomException(
                 detail='school already exists', status_code=status.HTTP_409_CONFLICT)
         else:
-            return Response(status=status.HTTP_201_CREATED)
+            return Response(self.get_response_data(school), status=status.HTTP_201_CREATED)

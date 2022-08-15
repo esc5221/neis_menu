@@ -22,6 +22,13 @@ class MenuView(CustomView):
         date = request.data.get('date')
         type = request.data.get('type')
 
+        if date is None:
+            raise CustomException(detail='date is required',
+                                  status_code=status.HTTP_400_BAD_REQUEST)
+        if type is None:
+            raise CustomException(detail='type is required',
+                                  status_code=status.HTTP_400_BAD_REQUEST)
+
         menu = self.get_object_or_404(
             school_id=school_id,
             date=date,
@@ -48,7 +55,8 @@ class MenuWeeklyView(CustomView):
             try:
                 date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
             except ValueError:
-                raise CustomException(detail='Invalid date format.', status_code=status.HTTP_400_BAD_REQUEST)
+                raise CustomException(
+                    detail='Invalid date format.', status_code=status.HTTP_400_BAD_REQUEST)
 
         week_start_date, week_end_date = self.get_week_start_end_date(date)
 
