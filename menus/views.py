@@ -4,12 +4,14 @@ import itertools
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
 from menus.models import Menu
 from menus.schemas import MenuSchema, MenuListByDateSchema
 
 from menus.scripts.crawl_menus import get_menu_pydantic_model
 
 from common.views import CustomView
+from common.exceptions import CustomException
 
 
 class MenuView(CustomView):
@@ -46,7 +48,7 @@ class MenuWeeklyView(CustomView):
             try:
                 date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
             except ValueError:
-                return Response(status=status.HTTP_400_BAD_REQUEST)
+                raise CustomException(detail='Invalid date format.', status_code=status.HTTP_400_BAD_REQUEST)
 
         week_start_date, week_end_date = self.get_week_start_end_date(date)
 

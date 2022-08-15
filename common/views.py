@@ -7,7 +7,7 @@ from pydantic import BaseModel
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
+from common.exceptions import CustomException
 
 class CustomView(APIView):
     model = models.Model
@@ -21,7 +21,7 @@ class CustomView(APIView):
         try:
             return self.model.objects.get(**kwargs)
         except self.model.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            raise CustomException(detail='Not found.', status_code=status.HTTP_404_NOT_FOUND)
 
     def get_response_data(self, object, many=False):
         '''
