@@ -41,12 +41,12 @@ class SchoolListCreateView(CustomView):
             school_data = get_school_pydantic_model(school_code).dict()
         except Exception as e:
             raise CustomException(
-                detail='not found', status_code=status.HTTP_404_NOT_FOUND)
+                detail='Not found.', status_code=status.HTTP_404_NOT_FOUND)
 
         try:
             school = School.objects.create(**school_data)
         except IntegrityError:
             raise CustomException(
-                detail='school already exists', status_code=status.HTTP_409_CONFLICT)
+                detail='School already exists.', status_code=status.HTTP_409_CONFLICT)
         else:
             return Response(self.get_response_data(school), status=status.HTTP_201_CREATED)
