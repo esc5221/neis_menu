@@ -24,6 +24,6 @@ url = 'http://127.0.0.1:8000/api/v1/schools/'
 
 # request post schoools for each school_code
 for school_code in school_codes:
-    response = requests.post(url data={'school_code': school_code})
+    response = requests.post(url, data={'school_code': school_code})
     print(response.status_code)
     sleep(0.1)
