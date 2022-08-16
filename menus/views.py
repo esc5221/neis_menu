@@ -48,9 +48,12 @@ class MenuWeeklyView(CustomView):
 
         return week_start_date, week_end_date
 
+    def get_today(self):
+        return datetime.date.today()
+
     def get(self, request, school_id):
         if (date := request.query_params.get('date')) is None:
-            date = datetime.date.today()
+            date = self.get_today()
         else:
             try:
                 date = datetime.datetime.strptime(date, '%Y-%m-%d').date()

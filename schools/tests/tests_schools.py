@@ -28,7 +28,7 @@ class SchoolFactory(DjangoModelFactory):
 
 class TestSchoolView(TestCase):
     @classmethod
-    def setUpTestData(cls):
+    def setUp(cls):
         for i in range(1, 4):
             school = SchoolFactory(
                 code=int(str(i)*8),
@@ -73,7 +73,7 @@ class TestSchoolView(TestCase):
 
 class TestSchoolListCreateView(TestCase):
     @classmethod
-    def setUpTestData(cls):
+    def setUp(cls):
         for i in range(1, 4):
             school = SchoolFactory(
                 code=int(str(i)*8),
