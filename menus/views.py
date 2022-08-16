@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from menus.models import Menu
-from menus.schemas import MenuSchema, MenuListByDateSchema
+from menus.schemas import MenuSchema, MenuListOfDateSchema
 
 from menus.scripts.crawl_menus import get_menu_pydantic_model
 
@@ -60,27 +60,33 @@ class MenuWeeklyView(CustomView):
 
         week_start_date, week_end_date = self.get_week_start_end_date(date)
 
-        queryset = self.model.objects.filter(
+        weekly_menu_queryset = self.model.objects.filter(
             school_id=school_id,
             date__gte=week_start_date, date__lte=week_end_date
         )
 
-        # https://stackoverflow.com/questions/67871570/how-to-split-a-list-into-sublists-based-on-unique-values-of-one-column
-        def order_by_date(x): return x.date
+        def by_date(x): return x.date
 
-        instance_list_grouped_by_date = itertools.groupby(
-            sorted(queryset, key=order_by_date),
-            key=order_by_date
+        # split Menu object(evaluated from queryset) list by date
+        # https://stackoverflow.com/questions/67871570/how-to-split-a-list-into-sublists-based-on-unique-values-of-one-column
+        weekly_menu_object_list_grouped_by_date = itertools.groupby(
+            sorted(weekly_menu_queryset, key=by_date),
+            key=by_date
         )
 
-        menu_list = []
-        # convert each date's Menu instance list to a MenuListByDateSchema
-        # and append each MenuListByDateSchema list to menu_list
-        for date, instance in instance_list_grouped_by_date:
-            menu_list.append(
-                MenuListByDateSchema(
+        weekly_menu_list = []
+        # 1. Convert each date's Menu object(Django model) list(아침, 점심, 저녁) to MenuSchema(Pydantic) list
+        # 2. Create MenuListOfDateSchema for each date and corresponding MenuSchema list
+        # 2. Append each MenuListOfDateSchema list to weekly_menu_list
+        for date, menu_object in weekly_menu_object_list_grouped_by_date:
+            menu_schema_list = list(
+                map(lambda obj: MenuSchema(**obj.__dict__), menu_object)
+            )
+            weekly_menu_list.append(
+                MenuListOfDateSchema(
                     date=date,
-                    menus=list(map(lambda instance: MenuSchema(**instance.__dict__), instance)))
+                    menus=menu_schema_list
+                )
             )
 
-        return Response(self.get_response_data(menu_list, many=True), status=status.HTTP_200_OK)
+        return Response(self.get_response_data(weekly_menu_list, many=True), status=status.HTTP_200_OK)

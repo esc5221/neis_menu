@@ -4,6 +4,9 @@ from pydantic import BaseModel, validator
 from schools.types import SchoolTypes
 
 class SchoolSchema(BaseModel):
+    '''
+    학교 정보를 담고 있는 모델
+    '''
     id: int
     code: int
     name: str
