@@ -1,6 +1,9 @@
-# API Docs
+# 학교 식단 정보 API 서버
+* NEIS Open API를 활용해 local db에 학교 정보, 학교별 식단 정보를 crawling 후, 해당 정보를 API로 서빙
+
+## API Docs
 [NEIS Menu API Documentation](https://documenter.getpostman.com/view/17269577/VUjSGPQ1#02e30990-a9c8-46ed-b289-823ac4b4c2de)
-# Install
+## Install
 ### Default
 ``` shell
 git clone https://github.com/esc5221/neis_menu
@@ -19,7 +22,7 @@ source django_loaddata.sh
 ```
 * NEIS API 인증 key를 복사해주어야 NEIS API를 사용가능
 
-# Utils
+## Utils
 ### `django_runserver.sh`
 ``` shell
 docker start neis_menu_django_1
@@ -33,7 +36,7 @@ docker exec -it neis_menu_django_1 /bin/bash
 ```
 * docker container에 접속하여 내부에서 django command 실행 가능
 
-# Django runscript (from django-extensions)
+## Django runscript (from django-extensions)
 ### `crawl_menus`
 ``` shell
 ./manage.py runscript crawl_menus --script-args [run_mode] [start_date] [end_date]
