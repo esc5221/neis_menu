@@ -1,0 +1,7 @@
+[run]
+branch = true
+omit = neis_menu/*, */tests/*, */migrations/*, */urls.py, */settings/*, */wsgi.py, */tests*.py, *__init__.py*, manage.py, fabfile.py
+source = .
+
+[report]
+show_missing = true
