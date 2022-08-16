@@ -19,8 +19,8 @@ class MenuView(CustomView):
     schema = MenuSchema
 
     def get(self, request, school_id):
-        date = request.data.get('date')
-        type = request.data.get('type')
+        date = request.query_params.get('date')
+        type = request.query_params.get('type')
 
         if date is None:
             raise CustomException(detail='date is required',
