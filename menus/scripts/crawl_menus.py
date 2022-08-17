@@ -41,6 +41,7 @@ class MenuPydanticModel(BaseModel):
             raise ValueError(f'must be in {MenuTypes.values}. got {type}')
         return MenuTypes(type)
 
+    # format_dishes를 다른 클래스나 유틸 함수를 호출하는 형태면 재사용성, 테스트에 유리할 것 같다.
     @validator('dishes')
     def format_dishes(cls, dishes):
         regex = r'\({0,1}\d{1,2}\.\){0,1}'
