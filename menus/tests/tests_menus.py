@@ -193,6 +193,7 @@ class TestMenuWeeklyView(TestCase):
                 )
 
     # https://stackoverflow.com/questions/1042900/django-unit-testing-with-date-time-based-objects
+    # freezegun 쓰는게 좋다
     @patch('menus.views.MenuWeeklyView.get_today', return_value=datetime.date(year=2022, month=8, day=24))
     def test_response_success_this_week(self, mock_today):
         for i in range(1, 4):
