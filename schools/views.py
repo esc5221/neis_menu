@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from schools.models import School
-from schools.schemas import SchoolSchema
+from schools.schemas_v1 import SchoolSchema
 
 from schools.scripts.crawl_schools import get_school_pydantic_model
 
