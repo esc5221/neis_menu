@@ -1,11 +1,12 @@
 from django.db import models
 
+from common.models import BaseModel
 from schools.models import School
 
 from menus.types import MenuTypes
 
 
-class Menu(models.Model):
+class Menu(BaseModel):
 
     school = models.ForeignKey(School, on_delete=models.CASCADE)
     type = models.IntegerField(choices=MenuTypes.choices)
