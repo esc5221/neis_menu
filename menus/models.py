@@ -20,7 +20,7 @@ class Menu(BaseModel):
                 fields=['school', 'type', 'date'], name='unique_school_type_date')
         ]
         indexes = [
-            models.Index(fields=['date', 'school'], name='date_school_idx')
+            models.Index(fields=['school', 'date'], name='school_date_idx')
         ]
 
     def __str__(self):
