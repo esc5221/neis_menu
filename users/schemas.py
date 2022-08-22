@@ -2,7 +2,10 @@ from typing import Optional
 
 from django.contrib.auth import get_user_model
 
+from pydantic import validator
 from ninja import Schema, ModelSchema
+
+
 User = get_user_model()
 
 
@@ -24,6 +27,12 @@ class UserSignupParams(Schema):
     email: Optional[str] = None
     first_name: str
     last_name: str
+
+    @validator("username")
+    def unique_username(cls, username):
+        if User.objects.filter(username=username).exists():
+            raise ValueError("Username already exists.")
+        return username
 
 
 class UserLoginParams(Schema):
