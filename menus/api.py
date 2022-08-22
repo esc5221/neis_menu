@@ -14,7 +14,7 @@ from menus.models import Menu
 router = Router(tags=["menus"])
 
 
-@router.get("/menus/", response=MenuDTO)
+@router.get("/", response=MenuDTO)
 def get_menus(request, params: MenuGetParams = Query(...)):
 
     # service로 분리.
@@ -26,7 +26,7 @@ def get_menus(request, params: MenuGetParams = Query(...)):
     return menus
 
 
-@router.get("/menus/weekly/", response=MenuWeeklyListDTO)
+@router.get("/weekly/", response=MenuWeeklyListDTO)
 def list_menus_weekly(request, school_id: int, date: str = None):
     # service로 분리.
     weekly_menu_queryset = Menu.objects.filter(
