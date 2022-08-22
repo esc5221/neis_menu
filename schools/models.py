@@ -1,11 +1,14 @@
 from django.db import models
 
+from common.models import BaseModel
+
 from schools.types import SchoolTypes, EduOffices
 
-class School(models.Model):
+class School(BaseModel):
 
     code = models.IntegerField(unique=True)
-    edu_office_code = models.CharField(max_length=10, choices=EduOffices.choices)
+    edu_office_code = models.CharField(
+        max_length=10, choices=EduOffices.choices)
     name = models.CharField(max_length=100, blank=False)
     type = models.IntegerField(choices=SchoolTypes.choices)
     location = models.CharField(max_length=100, blank=True, null=False)

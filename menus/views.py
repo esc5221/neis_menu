@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from menus.models import Menu
-from menus.schemas import MenuSchema, MenuListOfDateSchema
+from menus.schemas_v1 import MenuSchema, MenuListOfDateSchema
 
 from menus.scripts.crawl_menus import get_menu_pydantic_model
 

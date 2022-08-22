@@ -15,7 +15,7 @@ from rest_framework import status
 from schools.models import School
 from menus.models import Menu
 from menus.types import MenuTypes
-from menus.schemas import MenuSchema
+from menus.schemas_v1 import MenuSchema
 
 
 class SchoolFactory(DjangoModelFactory):
