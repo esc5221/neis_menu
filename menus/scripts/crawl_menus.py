@@ -1,18 +1,18 @@
 from __future__ import annotations
 
 import requests
-import re
 
-from datetime import date, datetime
-from typing import List, Optional, Any
+from datetime import datetime
+from typing import List, Optional
 from pydantic import BaseModel, Field, validator
 
 from neis_menu.settings import NEIS_API_KEY
 
+from schools.models import School
+
 from menus.types import MenuTypes
 from menus.models import Menu
-
-from schools.models import School
+from utils.formatter import DishFormatter
 
 import pprint
 
@@ -31,9 +31,9 @@ class MenuPydanticModel(BaseModel):
     school_code: int = Field(alias='SD_SCHUL_CODE')
     school_name: str = Field(alias='SCHUL_NM')
     type: int = Field(alias='MMEAL_SC_CODE')
-    date: Any = Field(alias='MLSV_YMD')
+    date: str = Field(alias='MLSV_YMD')
     dishes: str = Field(alias='DDISH_NM')
-    calories: Any = Field(alias='CAL_INFO')
+    calories: str = Field(alias='CAL_INFO')
 
     @validator('type')
     def type_must_be_in_MenuTypes(cls, type):
@@ -43,17 +43,7 @@ class MenuPydanticModel(BaseModel):
 
     @validator('dishes')
     def format_dishes(cls, dishes):
-        regex = r'\({0,1}\d{1,2}\.\){0,1}'
-        replaced = re.sub(regex, '', dishes)
-        regex = r'\*{1,2}'
-        replaced = re.sub(regex, '', replaced)
-        regex = r'<br\/>'
-        replaced = re.sub(regex, ', ', replaced)
-        regex = r'\s{2,}'
-        replaced = re.sub(regex, ' ', replaced)
-        regex = r'\s,'
-        replaced = re.sub(regex, ',', replaced)
-        return replaced.strip()
+        return DishFormatter.format_raw_str(dishes)
 
     @validator('date')
     def format_date(cls, date_str):
@@ -129,9 +119,6 @@ def get_menu_pydantic_model(*args):
     m = MealServiceDietInfo(**p)
     return m.mealServiceDietInfo[1].row
 
-# p = get_menu()
-# m1 = MealServiceDietInfo(**p)
-# print()
 
 # ex)
 # ./manage.py runscript crawl_menus --script-args 20220101 20220106 9300054
@@ -139,8 +126,8 @@ def get_menu_pydantic_model(*args):
 
 def run(*args):
     if args[0] == 'test':
-        rs = get_menu_pydantic_model(9300054, 'I10', '20220101', '20220106')
-        for i in rs:
+        menu_list = get_menu_pydantic_model(9300054, 'I10', '20220101', '20220106')
+        for i in menu_list:
             pprint.pprint(i.dict(), indent=2)
         return
 
@@ -164,18 +151,18 @@ def run(*args):
             school_infos = School.objects.values_list(
                 'code', 'edu_office_code')
             for school_code, edu_office_code in school_infos:
-                rs = get_menu_pydantic_model(school_code, edu_office_code,
+                menu_list = get_menu_pydantic_model(school_code, edu_office_code,
                                              start_date, end_date)
-                for i in rs:
+                for i in menu_list:
                     valid_data_dict = i.dict()
                     valid_data_dict['school'] = School.objects.get(
                         code=school_code)
                     valid_data_dict.pop('school_code')
                     valid_data_dict.pop('school_name')
                     Menu.objects.create(**valid_data_dict)
-                count += len(rs)
+                count += len(menu_list)
                 print(
-                    f'    * {school_code} - {len(rs)} rows  / total {count} rows are crawled')
+                    f'    * {school_code} - {len(menu_list)} rows  / total {count} rows are crawled')
             #rs = get_rows('9300054', 'I10', start_date, end_date)
             # for i in rs:
             #     pprint.pprint(i.dict(), indent=2)

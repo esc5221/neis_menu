@@ -1,5 +1,7 @@
-from typing import Optional, List
+from datetime import datetime
+from typing import List
 
+from pydantic import validator
 from ninja import Schema, ModelSchema
 
 from menus.models import Menu
@@ -37,7 +39,27 @@ class MenuWeeklyListDTO(Schema):
         return cls(items=weekly_menu_list)
 
 
-class MenuGetParams(Schema):
+class MenuParams(Schema):
     school_id: int
     date: str
     type: int
+
+    @validator('date')
+    def validate_date(cls, date_str):
+        try:
+            return datetime.strptime(date_str, '%Y-%m-%d')
+        except Exception as e:
+            raise ValueError(f'date format should be %Y-%m-%d got {date_str}')
+
+class MenuWeeklyListParams(Schema):
+    school_id: int
+    date: str = None
+
+    @validator('date')
+    def validate_date(cls, date_str):
+        try:
+            return datetime.strptime(date_str, '%Y-%m-%d')
+        except Exception as e:
+            raise ValueError(f'date format should be %Y-%m-%d got {date_str}')
+
+
