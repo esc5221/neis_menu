@@ -12,5 +12,6 @@ class BaseModelManager(models.Manager):
 
 class BaseModel(models.Model):
     objects = BaseModelManager()
+
     class Meta:
         abstract = True

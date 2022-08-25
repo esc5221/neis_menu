@@ -31,12 +31,12 @@ class TestSchoolView(TestCase):
     def setUp(cls):
         for i in range(1, 4):
             school = SchoolFactory(
-                code=int(str(i)*8),
-                name=f'테스트{i}초등학교',
-                location='서울특별시',
-                address=f'서울특별시 강남구 테헤란로 415',
+                code=int(str(i) * 8),
+                name=f"테스트{i}초등학교",
+                location="서울특별시",
+                address=f"서울특별시 강남구 테헤란로 415",
                 type=1,
-                edu_office_code='J10',
+                edu_office_code="J10",
             )
             setattr(cls, f"school_{i}", school)
 
@@ -54,21 +54,19 @@ class TestSchoolView(TestCase):
     def test_response_success(self):
         for i in range(1, 4):
             school = getattr(self, f"school_{i}")
-            response = self.client.get(f'/api/v1/schools/{school.id}/')
+            response = self.client.get(f"/api/v1/schools/{school.id}/")
             self.assertEqual(response.status_code, status.HTTP_200_OK)
-            self.assertEqual(response.json()['name'], school.name)
-            self.assertEqual(response.json()['code'], school.code)
-            self.assertEqual(response.json()['location'], school.location)
-            self.assertEqual(response.json()['address'], school.address)
-            self.assertEqual(
-                response.json()['type'], SchoolTypes(school.type).name)
-            self.assertEqual(
-                response.json()['edu_office_code'], school.edu_office_code)
+            self.assertEqual(response.json()["name"], school.name)
+            self.assertEqual(response.json()["code"], school.code)
+            self.assertEqual(response.json()["location"], school.location)
+            self.assertEqual(response.json()["address"], school.address)
+            self.assertEqual(response.json()["type"], SchoolTypes(school.type).name)
+            self.assertEqual(response.json()["edu_office_code"], school.edu_office_code)
 
     def test_response_404(self):
-        response = self.client.get('/api/v1/schools/100/')
+        response = self.client.get("/api/v1/schools/100/")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertEqual(response.json()['detail'], 'Not found.')
+        self.assertEqual(response.json()["detail"], "Not found.")
 
 
 class TestSchoolListCreateView(TestCase):
@@ -76,38 +74,50 @@ class TestSchoolListCreateView(TestCase):
     def setUp(cls):
         for i in range(1, 4):
             school = SchoolFactory(
-                code=int(str(i)*8),
-                name=f'테스트{i}초등학교',
-                location='서울특별시',
-                address=f'서울특별시 강남구 테헤란로 415',
+                code=int(str(i) * 8),
+                name=f"테스트{i}초등학교",
+                location="서울특별시",
+                address=f"서울특별시 강남구 테헤란로 415",
                 type=1,
-                edu_office_code='J10',
+                edu_office_code="J10",
             )
             setattr(cls, f"school_{i}", school)
 
     def test_get_schools_response_success(self):
-        response = self.client.get(f'/api/v1/schools/')
+        response = self.client.get(f"/api/v1/schools/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.json()['school_list']), 3)
+        self.assertEqual(len(response.json()["school_list"]), 3)
         for i in range(1, 4):
             self.assertEqual(
-                response.json()['school_list'][i-1]['name'], getattr(self, f"school_{i}").name)
+                response.json()["school_list"][i - 1]["name"],
+                getattr(self, f"school_{i}").name,
+            )
             self.assertEqual(
-                response.json()['school_list'][i-1]['code'], getattr(self, f"school_{i}").code)
-            self.assertEqual(response.json()[
-                             'school_list'][i-1]['location'], getattr(self, f"school_{i}").location)
-            self.assertEqual(response.json()[
-                             'school_list'][i-1]['address'], getattr(self, f"school_{i}").address)
-            self.assertEqual(response.json()[
-                             'school_list'][i-1]['type'], SchoolTypes(getattr(self, f"school_{i}").type).name)
-            self.assertEqual(response.json()[
-                             'school_list'][i-1]['edu_office_code'], getattr(self, f"school_{i}").edu_office_code)
+                response.json()["school_list"][i - 1]["code"],
+                getattr(self, f"school_{i}").code,
+            )
+            self.assertEqual(
+                response.json()["school_list"][i - 1]["location"],
+                getattr(self, f"school_{i}").location,
+            )
+            self.assertEqual(
+                response.json()["school_list"][i - 1]["address"],
+                getattr(self, f"school_{i}").address,
+            )
+            self.assertEqual(
+                response.json()["school_list"][i - 1]["type"],
+                SchoolTypes(getattr(self, f"school_{i}").type).name,
+            )
+            self.assertEqual(
+                response.json()["school_list"][i - 1]["edu_office_code"],
+                getattr(self, f"school_{i}").edu_office_code,
+            )
 
     def test_get_schools_response_success_but_empty_school_list(self):
         School.objects.all().delete()
-        response = self.client.get(f'/api/v1/schools/')
+        response = self.client.get(f"/api/v1/schools/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.json()['school_list']), 0)
+        self.assertEqual(len(response.json()["school_list"]), 0)
 
     get_school_pydantic_model_response = {
         "ATPT_OFCDC_SC_CODE": "I10",
@@ -134,79 +144,99 @@ class TestSchoolListCreateView(TestCase):
         "DGHT_SC_NM": "주간",
         "FOND_YMD": "19260429",
         "FOAS_MEMRD": "19260429",
-        "LOAD_DTM": "20220807"
+        "LOAD_DTM": "20220807",
     }
 
-    @patch("schools.views.get_school_pydantic_model", return_value=SchoolPydanticModel(**get_school_pydantic_model_response))
+    @patch(
+        "schools.views.get_school_pydantic_model",
+        return_value=SchoolPydanticModel(**get_school_pydantic_model_response),
+    )
     def test_post_schools_response_success(self, mock_get_school_pydantic_model):
-        response = self.client.post(f'/api/v1/schools/',
-                                    data={'school_code': 9300054},
-                                    content_type='application/json'
-                                    )
+        response = self.client.post(
+            f"/api/v1/schools/",
+            data={"school_code": 9300054},
+            content_type="application/json",
+        )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.json()['name'], '세종고등학교')
-        self.assertEqual(response.json()['code'], 9300054)
-        self.assertEqual(response.json()['location'], '세종특별자치시')
-        self.assertEqual(
-            response.json()['address'], '세종특별자치시  조치원읍 조치원중고길 10')
-        self.assertEqual(response.json()['type'], SchoolTypes(3).name)
-        self.assertEqual(response.json()['edu_office_code'], 'I10')
+        self.assertEqual(response.json()["name"], "세종고등학교")
+        self.assertEqual(response.json()["code"], 9300054)
+        self.assertEqual(response.json()["location"], "세종특별자치시")
+        self.assertEqual(response.json()["address"], "세종특별자치시  조치원읍 조치원중고길 10")
+        self.assertEqual(response.json()["type"], SchoolTypes(3).name)
+        self.assertEqual(response.json()["edu_office_code"], "I10")
 
     def test_post_schools_response_no_school_code(self):
-        response = self.client.post(f'/api/v1/schools/',
-                                    data={},
-                                    content_type='application/json'
-                                    )
+        response = self.client.post(
+            f"/api/v1/schools/", data={}, content_type="application/json"
+        )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.json()['detail'], 'School code is required.')
+        self.assertEqual(response.json()["detail"], "School code is required.")
 
     @patch("schools.views.get_school_pydantic_model", return_value=None)
     def test_post_schools_response_neis_api_fail(self, mock_get_school_pydantic_model):
         def IndexError():
             raise IndexError()
+
         mock_get_school_pydantic_model.raiseError.side_effect = IndexError
-        response = self.client.post(f'/api/v1/schools/',
-                                    data={'school_code': 9300054},
-                                    content_type='application/json'
-                                    )
+        response = self.client.post(
+            f"/api/v1/schools/",
+            data={"school_code": 9300054},
+            content_type="application/json",
+        )
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertEqual(response.json()['detail'], 'Not found.')
+        self.assertEqual(response.json()["detail"], "Not found.")
 
-    @patch("schools.views.get_school_pydantic_model", return_value=SchoolPydanticModel(**get_school_pydantic_model_response))
-    def test_post_schools_response_duplicate_school_code(self, mock_get_school_pydantic_model):
-        School.objects.create(code=9300054, name='세종고등학교', location='세종특별자치시',
-                              address='세종특별자치시  조치원읍 조치원중고길 10', type=SchoolTypes(3), edu_office_code='I10')
-        response = self.client.post(f'/api/v1/schools/',
-                                    data={'school_code': 9300054},
-                                    content_type='application/json'
-                                    )
+    @patch(
+        "schools.views.get_school_pydantic_model",
+        return_value=SchoolPydanticModel(**get_school_pydantic_model_response),
+    )
+    def test_post_schools_response_duplicate_school_code(
+        self, mock_get_school_pydantic_model
+    ):
+        School.objects.create(
+            code=9300054,
+            name="세종고등학교",
+            location="세종특별자치시",
+            address="세종특별자치시  조치원읍 조치원중고길 10",
+            type=SchoolTypes(3),
+            edu_office_code="I10",
+        )
+        response = self.client.post(
+            f"/api/v1/schools/",
+            data={"school_code": 9300054},
+            content_type="application/json",
+        )
 
         self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
-        self.assertEqual(response.json()['detail'], 'School already exists.')
+        self.assertEqual(response.json()["detail"], "School already exists.")
 
-    @patch("schools.views.get_school_pydantic_model", return_value=SchoolPydanticModel(**get_school_pydantic_model_response))
+    @patch(
+        "schools.views.get_school_pydantic_model",
+        return_value=SchoolPydanticModel(**get_school_pydantic_model_response),
+    )
     def test_post_schools_response_request2번연속(self, mock_get_school_pydantic_model):
-        response = self.client.post(f'/api/v1/schools/',
-                                    data={'school_code': 9300054},
-                                    content_type='application/json'
-                                    )
+        response = self.client.post(
+            f"/api/v1/schools/",
+            data={"school_code": 9300054},
+            content_type="application/json",
+        )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.json()['name'], '세종고등학교')
-        self.assertEqual(response.json()['code'], 9300054)
-        self.assertEqual(response.json()['location'], '세종특별자치시')
-        self.assertEqual(
-            response.json()['address'], '세종특별자치시  조치원읍 조치원중고길 10')
-        self.assertEqual(response.json()['type'], SchoolTypes(3).name)
-        self.assertEqual(response.json()['edu_office_code'], 'I10')
+        self.assertEqual(response.json()["name"], "세종고등학교")
+        self.assertEqual(response.json()["code"], 9300054)
+        self.assertEqual(response.json()["location"], "세종특별자치시")
+        self.assertEqual(response.json()["address"], "세종특별자치시  조치원읍 조치원중고길 10")
+        self.assertEqual(response.json()["type"], SchoolTypes(3).name)
+        self.assertEqual(response.json()["edu_office_code"], "I10")
 
-        response = self.client.post(f'/api/v1/schools/',
-                                    data={'school_code': 9300054},
-                                    content_type='application/json'
-                                    )
+        response = self.client.post(
+            f"/api/v1/schools/",
+            data={"school_code": 9300054},
+            content_type="application/json",
+        )
 
         self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
-        self.assertEqual(response.json()['detail'], 'School already exists.')
+        self.assertEqual(response.json()["detail"], "School already exists.")

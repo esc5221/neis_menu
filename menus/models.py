@@ -27,11 +27,10 @@ class Menu(BaseModel):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['school', 'type', 'date'], name='unique_school_type_date')
+                fields=["school", "type", "date"], name="unique_school_type_date"
+            )
         ]
-        indexes = [
-            models.Index(fields=['school', 'date'], name='school_date_idx')
-        ]
+        indexes = [models.Index(fields=["school", "date"], name="school_date_idx")]
 
     def __str__(self):
-        return self.school.name + ' ' + self.get_type_display() + ' ' + str(self.date)
+        return self.school.name + " " + self.get_type_display() + " " + str(self.date)

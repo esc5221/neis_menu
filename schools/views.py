@@ -28,25 +28,33 @@ class SchoolListCreateView(CustomView):
 
     def get(self, request):
         schools = self.model.objects.all()
-        return Response(self.get_response_data(schools, many=True), status=status.HTTP_200_OK)
+        return Response(
+            self.get_response_data(schools, many=True), status=status.HTTP_200_OK
+        )
 
     def post(self, request):
 
-        school_code = request.data.get('school_code')
+        school_code = request.data.get("school_code")
         if school_code is None:
             raise CustomException(
-                detail='School code is required.', status_code=status.HTTP_400_BAD_REQUEST)
+                detail="School code is required.",
+                status_code=status.HTTP_400_BAD_REQUEST,
+            )
 
         try:
             school_data = get_school_pydantic_model(school_code).dict()
         except Exception as e:
             raise CustomException(
-                detail='Not found.', status_code=status.HTTP_404_NOT_FOUND)
+                detail="Not found.", status_code=status.HTTP_404_NOT_FOUND
+            )
 
         try:
             school = School.objects.create(**school_data)
         except IntegrityError:
             raise CustomException(
-                detail='School already exists.', status_code=status.HTTP_409_CONFLICT)
+                detail="School already exists.", status_code=status.HTTP_409_CONFLICT
+            )
         else:
-            return Response(self.get_response_data(school), status=status.HTTP_201_CREATED)
+            return Response(
+                self.get_response_data(school), status=status.HTTP_201_CREATED
+            )

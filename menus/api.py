@@ -8,7 +8,13 @@ from ninja.pagination import paginate
 # import all class from menus.schemas
 from schools.models import School
 from menus.models import Menu
-from menus.schemas import MenuDTO, MenuDailyListDTO, MenuWeeklyListDTO, MenuParams, MenuWeeklyListParams
+from menus.schemas import (
+    MenuDTO,
+    MenuDailyListDTO,
+    MenuWeeklyListDTO,
+    MenuParams,
+    MenuWeeklyListParams,
+)
 from menus.services import MenuService, MenuWeeklyListService
 
 router = Router(tags=["menus"])

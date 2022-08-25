@@ -3,10 +3,12 @@ from pydantic import BaseModel, validator
 
 from schools.types import SchoolTypes
 
+
 class SchoolSchema(BaseModel):
-    '''
+    """
     학교 정보를 담고 있는 모델
-    '''
+    """
+
     id: int
     code: int
     name: str
@@ -15,6 +17,6 @@ class SchoolSchema(BaseModel):
     location: str
     address: str
 
-    @validator('type')
+    @validator("type")
     def type_to_str(cls, type):
         return SchoolTypes(type).label

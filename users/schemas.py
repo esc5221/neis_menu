@@ -10,7 +10,6 @@ User = get_user_model()
 
 
 class UserDTO(ModelSchema):
-
     class Config:
         model = User
         model_fields = ["id", "username", "email"]
