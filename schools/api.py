@@ -27,10 +27,17 @@ def post_school(request, data: SchoolPostParams):
     else:
         return response_code, {"detail": result}
 
+
 @router.get("/", response=SchoolListDTO)
 def list_schools(request):
     schools = School.objects.all()
-    return SchoolListDTO(items=list(schools))
+    return {"items": list(schools)}
+
+
+@router.get("/list/", response=List[SchoolDTO])
+def raw_list_schools(request):
+    schools = School.objects.all()
+    return schools
 
 
 @router.get("/paged/", response=List[SchoolDTO])
